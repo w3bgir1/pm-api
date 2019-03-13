@@ -1,10 +1,12 @@
 const { Router } = require('express')
 const Project = require('./model')
 const Todo = require('../todos/model')
+const auth = require('../auth/middleware')
+
 
 const router = new Router()
 
-router.get('/projects', (req, res, next) => {
+router.get('/projects', auth, (req, res, next) => {
   const limit = req.query.limit || 5
   const offset = req.query.offset || 0
 
@@ -20,7 +22,7 @@ router.get('/projects', (req, res, next) => {
     .catch(error => next(error))
 })
 
-router.get('/projects/:id', (req, res, next) => {
+router.get('/projects/:id', auth, (req, res, next) => {
   Promise.all([
     Project.findById(req.params.id),
     Todo.findAll({
@@ -40,7 +42,7 @@ router.get('/projects/:id', (req, res, next) => {
     .catch(error => next(error))
 })
 
-router.post('/projects', (req, res, next) => {
+router.post('/projects', auth, (req, res, next) => {
     Project
     .create(req.body)
     .then(project => {
@@ -55,7 +57,7 @@ router.post('/projects', (req, res, next) => {
 })
 
 
-router.delete('/projects/:id', (req, res, next) => {
+router.delete('/projects/:id', auth, (req, res, next) => {
     Project
     .findById(req.params.id)
     .then(project => {
